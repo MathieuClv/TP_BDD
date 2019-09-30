@@ -14,12 +14,16 @@ set session sql_mode = 'ONLY_FULL_GROUP_BY';
 select 'Query 01' as '';
 -- The countries of residence the supplier had to ship products to in 2014
 -- Les pays de résidence où le fournisseur a dû envoyer des produits en 2014
+select distinct residence --s'il y a deux residences identiques les affiches t'ont ? ou UNIQUE ?
+from customers
+where not (residence is null); --ici on s'interrogera si la residence null doit etre affiche ?
 
 
 select 'Query 02' as '';
 -- For each known country of origin, its name, the number of products from that country, their lowest price, their highest price
 -- Pour chaque pays d'orgine connu, son nom, le nombre de produits de ce pays, leur plus bas prix, leur plus haut prix
-
+select pname, price, origin from products --le nom du : pays ou du produit ? ou les deux ? 
+where origin is not null; -- plus haut et bas prix ?
 
 select 'Query 03' as '';
 -- The customers who ordered in 2014 all the products (at least) that the customers named 'Smith' ordered in 2013
@@ -36,11 +40,17 @@ select 'Query 04' as '';
 select 'Query 05' as '';
 -- The customers who only ordered products originating from their country
 -- Les clients n'ayant commandé que des produits provenant de leur pays
+select distinct c.cname, c.residence as customers, p.origin as products 
+from customers c right outer join products p 
+on c.residence = p.origin; --ici le soucis c'est que y a des NULL a cname et customers parce que y a plus d'origine de pays
 
 
 select 'Query 06' as '';
 -- The customers who ordered only products originating from foreign countries 
 -- Les clients n'ayant commandé que des produits provenant de pays étrangers
+select c.cname, c.residence as customers, p.origin as products
+from customers c right outer join products p
+on c.residence <> p.origin; 
 
 
 select 'Query 07' as '';
@@ -66,7 +76,9 @@ select 'Query 10' as '';
 select 'Query 11' as '';
 -- The customers who ordered the largest number of products
 -- Les clients ayant commandé le plus grand nombre de produits
-
+select c.cname, c.cid as customers, o.cid, o.quantity as orders
+from customers c left outer join orders o
+on c.cid = o.cid, quantity>=5; -- le plus grand nombre de produit ?
 
 select 'Query 12' as '';
 -- The products ordered by all the customers living in 'France'
