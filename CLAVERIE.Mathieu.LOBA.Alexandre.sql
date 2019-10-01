@@ -22,8 +22,7 @@ where not (residence is null); --ici on s'interrogera si la residence null doit 
 select 'Query 02' as '';
 -- For each known country of origin, its name, the number of products from that country, their lowest price, their highest price
 -- Pour chaque pays d'orgine connu, son nom, le nombre de produits de ce pays, leur plus bas prix, leur plus haut prix
-select pname, price, origin from products --le nom du : pays ou du produit ? ou les deux ? 
-where origin is not null; -- plus haut et bas prix ?
+select origin,count(pid), max(price), min(price) from products group by origin where origin is not NULL; 
 
 select 'Query 03' as '';
 -- The customers who ordered in 2014 all the products (at least) that the customers named 'Smith' ordered in 2013
@@ -78,17 +77,21 @@ select 'Query 11' as '';
 -- Les clients ayant commandé le plus grand nombre de produits
 select c.cname, c.cid as customers, o.cid, o.quantity as orders
 from customers c left outer join orders o
-on c.cid = o.cid, quantity>=5; -- le plus grand nombre de produit ?
+on c.cid = o.cid, quantity>=5; -- le plus grand nombre de produit ? ==> on doit avoir la bonne reponse meme si le nombre de produits augmente donc on peut pas utiliser de valeurs fixes
+
+select cid, cname, residence from customers natural join orders group by cid order by quantity; --> pas bon mais bonne base 
 
 select 'Query 12' as '';
 -- The products ordered by all the customers living in 'France'
 -- Les produits commandés par tous les clients vivant en 'France'
 
 
+
 select 'Query 13' as '';
 -- The customers who live in the same country customers named 'Smith' live in (customers 'Smith' not shown in the result)
 -- Les clients résidant dans les mêmes pays que les clients nommés 'Smith' (en excluant les Smith de la liste affichée)
-
+select c1.cid, c1.cname, c1.residence from customers c1 join customers c2 on c1.residence = c2.residence 
+where c1.residence = c2.residence and c2.cname = "Smith" and c1.cname <> "Smith";
 
 select 'Query 14' as '';
 -- The customers who ordered the largest total amount in 2014
@@ -103,6 +106,7 @@ select 'Query 15' as '';
 select 'Query 16' as '';
 -- The products ordered by the customers living in 'USA'
 -- Les produits commandés par les clients résidant aux 'USA'
+select distinct pid, pname, price, origin from products natural join customers natural join orders where residence = "USA";
 
 
 select 'Query 17' as '';
@@ -113,6 +117,7 @@ select 'Query 17' as '';
 select 'Query 18' as '';
 -- The products whose price is greater than all products from 'India'
 -- Les produits plus chers que tous les produits d'origine 'India'
+select pid, pname, price, origin from products where price > (select max(price) from products where origin = "India");
 
 
 select 'Query 19' as '';
