@@ -22,7 +22,7 @@ where not (residence is null); --ici on s'interrogera si la residence null doit 
 select 'Query 02' as '';
 -- For each known country of origin, its name, the number of products from that country, their lowest price, their highest price
 -- Pour chaque pays d'orgine connu, son nom, le nombre de produits de ce pays, leur plus bas prix, leur plus haut prix
-select origin,count(pid), max(price), min(price) from products group by origin where origin is not NULL; 
+select origin, count(pid), max(price), min(price) from products group by origin where origin is not NULL; -- ne marche plus sur mon ordi jsp pk 
 
 select 'Query 03' as '';
 -- The customers who ordered in 2014 all the products (at least) that the customers named 'Smith' ordered in 2013
