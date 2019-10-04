@@ -55,7 +55,8 @@ on c.residence <> p.origin;
 select 'Query 07' as '';
 -- The difference between 'USA' residents' per-order average quantity and 'France' residents' (USA - France)
 -- La différence entre quantité moyenne par commande des clients résidant aux 'USA' et celle des clients résidant en 'France' (USA - France)
-
+select avg(quantity) - (select avg(quantity) from customers natural join orders where residence = "France") as diff_avg 
+from customers natural join orders where residence = "USA" -- Ca marche mais je pense que cest pas opti du tout 
 
 select 'Query 08' as '';
 -- The products ordered throughout 2014, i.e. ordered each month of that year
