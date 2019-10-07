@@ -22,7 +22,7 @@ where not (residence is null); --ici on s'interrogera si la residence null doit 
 select 'Query 02' as '';
 -- For each known country of origin, its name, the number of products from that country, their lowest price, their highest price
 -- Pour chaque pays d'orgine connu, son nom, le nombre de produits de ce pays, leur plus bas prix, leur plus haut prix
-select origin, count(pid), max(price), min(price) from products group by origin where origin is not NULL; -- ne marche plus sur mon ordi jsp pk 
+select origin, count(pid), max(price), min(price) from products  where origin is not NULL group by origin; -- ne marche plus sur mon ordi jsp pk 
 
 select 'Query 03' as '';
 -- The customers who ordered in 2014 all the products (at least) that the customers named 'Smith' ordered in 2013
@@ -126,13 +126,8 @@ select 'Query 19' as '';
 -- Les produits commandés par le plus petit nombre de clients (les produits jamais commandés sont exclus)
 
 
-
 select 'Query 20' as '';
 -- For all countries listed in tables products or customers, including unknown countries: the name of the country, the number of customers living in this country, the number of products originating from that country
 -- Pour chaque pays listé dans les tables products ou customers, y compris les pays inconnus : le nom du pays, le nombre de clients résidant dans ce pays, le nombre de produits provenant de ce pays 
-SELECT origin, COUNT(pname), COUNT(cname)
-FROM products LEFT JOIN customers
-ON products.origin = customers.residence
-WHERE 1
-GROUP BY products.origin; --quasi bon mais s'il y a un produit et deux clients qui viennent du même pays ca affiche 2 au produit
+
 
