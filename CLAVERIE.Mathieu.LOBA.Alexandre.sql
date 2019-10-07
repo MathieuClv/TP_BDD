@@ -129,5 +129,9 @@ select 'Query 19' as '';
 select 'Query 20' as '';
 -- For all countries listed in tables products or customers, including unknown countries: the name of the country, the number of customers living in this country, the number of products originating from that country
 -- Pour chaque pays listé dans les tables products ou customers, y compris les pays inconnus : le nom du pays, le nombre de clients résidant dans ce pays, le nombre de produits provenant de ce pays 
-
+SELECT origin, COUNT(pname), COUNT(cname)
+FROM products LEFT JOIN customers
+ON products.origin = customers.residence
+WHERE 1
+GROUP BY products.origin; --quasi bon mais s'il y a un produit et deux clients qui viennent du même pays ca affiche 2 au produit
 
