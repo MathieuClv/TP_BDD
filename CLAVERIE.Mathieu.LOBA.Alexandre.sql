@@ -85,7 +85,8 @@ select cid, cname, residence from customers natural join orders group by cid ord
 select 'Query 12' as '';
 -- The products ordered by all the customers living in 'France'
 -- Les produits commandés par tous les clients vivant en 'France'
-
+select pname from products NATURAL JOIN customers NATURAL JOIN orders
+where residence = "France";
 
 
 select 'Query 13' as '';
