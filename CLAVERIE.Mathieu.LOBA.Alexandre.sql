@@ -49,7 +49,7 @@ select 'Query 06' as '';
 -- Les clients n'ayant commandé que des produits provenant de pays étrangers
 select c.cname, c.residence as customers, p.origin as products
 from customers c right outer join products p
-on c.residence <> p.origin; 
+on c.residence <> p.origin; -- cest quoi ca ? c'sst pas ce qui est demandé
 
 
 select 'Query 07' as '';
