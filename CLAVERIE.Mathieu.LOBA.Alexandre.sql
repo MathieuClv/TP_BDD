@@ -70,7 +70,10 @@ having count(distinct pid,month(odate))=12;
 select 'Query 09' as '';
 -- The customers who ordered all the products that cost less than $5
 -- Les clients ayant commandé tous les produits de moins de $5
-
+select cid, cname, residence from customers natural join products natural join orders 
+where price<5 
+group by cid 
+having count(distinct pid) = (select count(pid) from products where price<5);
 
 select 'Query 10' as '';
 -- The customers who ordered the greatest number of common products. Display 3 columns: cname1, cname2, number of common products, with cname1 < cname2
@@ -90,7 +93,7 @@ select 'Query 12' as '';
 -- The products ordered by all the customers living in 'France'
 -- Les produits commandés par tous les clients vivant en 'France'
 select pname from products NATURAL JOIN customers NATURAL JOIN orders
-where residence = "France";
+where residence = "France"; -- pas du tout ce qui est demandé, il faut s'assurer que le produit a été commandé par TOUS les francais
 
 
 select 'Query 13' as '';
