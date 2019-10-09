@@ -122,11 +122,16 @@ order by sum(quantity*price) DESC
 select 'Query 15' as '';
 -- The products with the largest per-order average amount 
 -- Les produits dont le montant moyen par commande est le plus élevé
-select pid, pname, origin, avg(quantity*price) 
+select pid, pname, origin 
 from products natural join orders 
 group by pid 
-having (select avg(quantity*price) from orders natural join products group by pid order by avg(quantity*price) desc limit 1) 
-order by avg(quantity*price); -- pas bon mais pas trop loin je pense 
+having avg(quantity*price) = (
+    select avg(quantity*price) 
+    from orders natural join products 
+    group by pid 
+    order by avg(quantity*price) desc 
+    limit 1) 
+order by avg(quantity*price); -- je ne pense pas que ce order by soit nécessaire (à vérifier)
 
 select 'Query 16' as '';
 -- The products ordered by the customers living in 'USA'
@@ -150,6 +155,14 @@ where price > (select max(price) from products where origin = "India");
 select 'Query 19' as '';
 -- The products ordered by the smallest number of customers (products never ordered are excluded)
 -- Les produits commandés par le plus petit nombre de clients (les produits jamais commandés sont exclus)
+select pid, pname, price, origin 
+from products natural join orders natural join customers 
+group by pid 
+having count(distinct cid) = (
+    select count(distinct cid) 
+    from orders natural join products natural join customers 
+    group by pid 
+    limit 1);
 
 
 select 'Query 20' as '';
