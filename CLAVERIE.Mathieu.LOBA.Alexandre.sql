@@ -61,6 +61,7 @@ from customers natural join orders where residence = "USA" -- Ca marche mais je 
 select 'Query 08' as '';
 -- The products ordered throughout 2014, i.e. ordered each month of that year
 -- Les produits commandés tout au long de 2014, i.e. commandés chaque mois de cette année
+select pid, pname, price, origin from orders natural join products where odate like "2014-__-__" group by pid having count(distinct pid,month(odate))=12;
 
 
 select 'Query 09' as '';
