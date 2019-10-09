@@ -122,7 +122,11 @@ order by sum(quantity*price) DESC
 select 'Query 15' as '';
 -- The products with the largest per-order average amount 
 -- Les produits dont le montant moyen par commande est le plus élevé
-
+select pid, pname, origin, avg(quantity*price) 
+from products natural join orders 
+group by pid 
+having (select avg(quantity*price) from orders natural join products group by pid order by avg(quantity*price) desc limit 1) 
+order by avg(quantity*price); -- pas bon mais pas trop loin je pense 
 
 select 'Query 16' as '';
 -- The products ordered by the customers living in 'USA'
@@ -138,7 +142,9 @@ select 'Query 17' as '';
 select 'Query 18' as '';
 -- The products whose price is greater than all products from 'India'
 -- Les produits plus chers que tous les produits d'origine 'India'
-select pid, pname, price, origin from products where price > (select max(price) from products where origin = "India");
+select pid, pname, price, origin 
+from products 
+where price > (select max(price) from products where origin = "India");
 
 
 select 'Query 19' as '';
