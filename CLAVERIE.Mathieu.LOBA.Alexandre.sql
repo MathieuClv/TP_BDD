@@ -15,8 +15,8 @@ select 'Query 01' as '';
 -- The countries of residence the supplier had to ship products to in 2014
 -- Les pays de résidence où le fournisseur a dû envoyer des produits en 2014
 select distinct residence --s'il y a deux residences identiques les affiches t'ont ? ou UNIQUE ?
-from customers
-where not (residence is null); --ici on s'interrogera si la residence null doit etre affiche ?
+from customers natural join orders where odate like "2014-__-__" 
+and residence is not NULL; --ici on s'interrogera si la residence null doit etre affiche ?
 
 
 select 'Query 02' as '';
