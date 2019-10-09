@@ -61,7 +61,10 @@ from customers natural join orders where residence = "USA" -- Ca marche mais je 
 select 'Query 08' as '';
 -- The products ordered throughout 2014, i.e. ordered each month of that year
 -- Les produits commandés tout au long de 2014, i.e. commandés chaque mois de cette année
-select pid, pname, price, origin from orders natural join products where odate like "2014-__-__" group by pid having count(distinct pid,month(odate))=12;
+select pid, pname, price, origin from orders natural join products 
+where odate like "2014-__-__" 
+group by pid 
+having count(distinct pid,month(odate))=12;
 
 
 select 'Query 09' as '';
@@ -99,6 +102,18 @@ where c1.residence = c2.residence and c2.cname = "Smith" and c1.cname <> "Smith"
 select 'Query 14' as '';
 -- The customers who ordered the largest total amount in 2014
 -- Les clients ayant commandé pour le plus grand montant total sur 2014 
+select cid, cname, residence from orders natural join products natural join customers 
+where odate like "2014-__-__" 
+group by cid 
+having sum(quantity*price) = (
+    select sum(quantity*price) 
+    from orders natural join products natural join customers 
+    where odate like "2014-__-__" 
+    group by cid
+    order by sum(quantity*price) desc
+    limit 1
+)
+order by sum(quantity*price) DESC
 
 
 select 'Query 15' as '';
