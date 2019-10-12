@@ -24,10 +24,27 @@ select 'Query 02' as '';
 -- Pour chaque pays d'orgine connu, son nom, le nombre de produits de ce pays, leur plus bas prix, leur plus haut prix
 select origin, count(pid), max(price), min(price) from products  where origin is not NULL group by origin; 
 
+
 select 'Query 03' as '';
 -- The customers who ordered in 2014 all the products (at least) that the customers named 'Smith' ordered in 2013
 -- Les clients ayant commandé en 2014 tous les produits (au moins) commandés par les clients nommés 'Smith' en 2013
-
+select distinct t2.cid, t2.cname, t2.residence
+from  (select * 
+       from orders natural join customers 
+       where odate like "2014-__-__") 
+as t2 
+join (select distinct * 
+      from orders natural join customers 
+      where odate like "2013-__-__" 
+      and cname = "Smith" ) 
+as t1 
+on t1.pid = t2.pid 
+group by t2.cname 
+having count(distinct t2.cname, t2.pid) = (select 
+                                           count(distinct pid) 
+                                           from orders natural join customers 
+                                           where odate like "2013-__-__" 
+                                           and cname = "Smith" )
 
 select 'Query 04' as '';
 -- For each customer and each product, the customer's name, the product's name, the total amount ordered by the customer for that product,
