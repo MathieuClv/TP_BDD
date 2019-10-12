@@ -44,7 +44,7 @@ having count(distinct t2.cname, t2.pid) = (select
                                            count(distinct pid) 
                                            from orders natural join customers 
                                            where odate like "2013-__-__" 
-                                           and cname = "Smith" )
+                                           and cname = "Smith" );
 
 select 'Query 04' as '';
 -- For each customer and each product, the customer's name, the product's name, the total amount ordered by the customer for that product,
