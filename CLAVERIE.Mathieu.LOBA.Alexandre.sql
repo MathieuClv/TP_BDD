@@ -22,7 +22,7 @@ and residence is not NULL; --ici on s'interrogera si la residence null doit etre
 select 'Query 02' as '';
 -- For each known country of origin, its name, the number of products from that country, their lowest price, their highest price
 -- Pour chaque pays d'orgine connu, son nom, le nombre de produits de ce pays, leur plus bas prix, leur plus haut prix
-select origin, count(pid), max(price), min(price) from products  where origin is not NULL group by origin; 
+select origin, count(pid), max(price), min(price) from products where origin is not NULL group by origin; 
 
 
 select 'Query 03' as '';
@@ -39,7 +39,7 @@ join (select distinct *
       and cname = "Smith" ) 
 as t1 
 on t1.pid = t2.pid 
-group by t2.cname 
+group by t2.cid
 having count(distinct t2.cname, t2.pid) = (select 
                                            count(distinct pid) 
                                            from orders natural join customers 
@@ -56,17 +56,21 @@ select 'Query 04' as '';
 select 'Query 05' as '';
 -- The customers who only ordered products originating from their country
 -- Les clients n'ayant commandé que des produits provenant de leur pays
-select distinct c.cname, c.residence as customers, p.origin as products 
-from customers c right outer join products p 
-on c.residence = p.origin; --ici le soucis c'est que y a des NULL a cname et customers parce que y a plus d'origine de pays
+select cid, cname, residence from (select *
+from customers natural join orders natural join products as p
+where residence is not null and origin is not null
+group by cid
+having not residence <> p.origin) as t1; 
 
 
 select 'Query 06' as '';
 -- The customers who ordered only products originating from foreign countries 
 -- Les clients n'ayant commandé que des produits provenant de pays étrangers
-select c.cname, c.residence as customers, p.origin as products
-from customers c right outer join products p
-on c.residence <> p.origin; -- cest quoi ca ? c'sst pas ce qui est demandé
+select cid, cname, residence from (select *
+from customers natural join orders natural join products as p
+where residence is not null and originis not null
+group by cid
+having not residence = p.origin) as t1;
 
 
 select 'Query 07' as '';
