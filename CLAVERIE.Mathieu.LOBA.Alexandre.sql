@@ -34,13 +34,11 @@ select 'Query 03' as '';
 select distinct t2.cid, t2.cname, t2.residence
 from  (select * 
        from orders natural join customers 
-       where odate like "2014-__-__") 
-as t2 
+       where odate like "2014-__-__") as t2 
 join (select distinct * 
       from orders natural join customers 
       where odate like "2013-__-__" 
-      and cname = "Smith" ) 
-as t1 
+      and cname = "Smith" ) as t1 
 on t1.pid = t2.pid 
 group by t2.cid
 having count(distinct t2.cname, t2.pid) = (select 
