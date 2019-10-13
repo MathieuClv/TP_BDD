@@ -103,6 +103,26 @@ select 'Query 10' as '';
 -- The customers who ordered the greatest number of common products. Display 3 columns: cname1, cname2, number of common products, with cname1 < cname2
 -- Les clients ayant commandé le grand nombre de produits commums. Afficher 3 colonnes : cname1, cname2, nombre de produits communs, avec cname1 < cname2
 
+select t1.cname, t2.cname, count(distinct t1.pid) 
+from (select cname,cid,pid,pname 
+      from orders natural join products natural join customers ) as t1
+join (select cname, cid, pid, pname
+            from orders natural join products natural join customers ) as t2
+on t1.pid = t2.pid
+where t1.cid <> t2.cid
+and t1.cname < t2.cname
+group by t1.cid, t2.cid 
+having count(distinct t1.pid) = (select count(distinct t1.pid)
+from (select cname,cid,pid,pname 
+      from orders natural join products natural join customers ) as t1
+join (select cname, cid, pid, pname
+            from orders natural join products natural join customers ) as t2
+on t1.pid = t2.pid
+where t1.cid <> t2.cid
+and t1.cname < t2.cname
+group by t1.cid, t2.cid
+order by count(distinct t1.pid) desc
+limit 1)
 
 select 'Query 11' as '';
 -- The customers who ordered the largest number of products
