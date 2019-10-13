@@ -22,7 +22,10 @@ and residence is not NULL; --ici on s'interrogera si la residence null doit etre
 select 'Query 02' as '';
 -- For each known country of origin, its name, the number of products from that country, their lowest price, their highest price
 -- Pour chaque pays d'orgine connu, son nom, le nombre de produits de ce pays, leur plus bas prix, leur plus haut prix
-select origin, count(pid), max(price), min(price) from products where origin is not NULL group by origin; 
+select origin, count(pid), max(price), min(price) 
+from products 
+where origin is not NULL 
+group by origin; 
 
 
 select 'Query 03' as '';
@@ -162,13 +165,23 @@ order by avg(quantity*price); -- je ne pense pas que ce order by soit nécessair
 select 'Query 16' as '';
 -- The products ordered by the customers living in 'USA'
 -- Les produits commandés par les clients résidant aux 'USA'
-select distinct pid, pname, price, origin from products natural join customers natural join orders where residence = "USA";
+select distinct pid, pname, price, origin 
+from products natural join customers natural join orders 
+where residence = "USA";
 
 
 select 'Query 17' as '';
 -- The pairs of customers who ordered the same product en 2014, and that product. Display 3 columns: cname1, cname2, pname, with cname1 < cname2
 -- Les paires de client ayant commandé le même produit en 2014, et ce produit. Afficher 3 colonnes : cname1, cname2, pname, avec cname1 < cname2
-
+select distinct t1.cname, t2.cname, t1.pname
+from (select * 
+      from customers natural join products natural join orders
+      where odate like "2014-__-__") as t1
+join (select * 
+      from customers natural join products natural join orders
+      where odate like "2014-__-__") as t2
+on t1.pid = t2.pid 
+where t1.cname < t2.cname;
 
 select 'Query 18' as '';
 -- The products whose price is greater than all products from 'India'
