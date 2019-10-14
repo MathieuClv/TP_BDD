@@ -72,7 +72,7 @@ select 'Query 06' as '';
 -- Les clients n'ayant commandé que des produits provenant de pays étrangers
 select cid, cname, residence from (select *
 from customers natural join orders natural join products as p
-where residence is not null and originis not null
+where residence is not null and origin is not null
 group by cid
 having not residence = p.origin) as t1;
 
@@ -80,8 +80,10 @@ having not residence = p.origin) as t1;
 select 'Query 07' as '';
 -- The difference between 'USA' residents' per-order average quantity and 'France' residents' (USA - France)
 -- La différence entre quantité moyenne par commande des clients résidant aux 'USA' et celle des clients résidant en 'France' (USA - France)
-select avg(quantity) - (select avg(quantity) from customers natural join orders where residence = "France") as diff_avg 
-from customers natural join orders where residence = "USA" -- Ca marche mais je pense que cest pas opti du tout 
+select avg(quantity) - (select avg(quantity) 
+                        from customers natural join orders 
+                        where residence = "France") as diff_avg 
+from customers natural join orders where residence = "USA"; 
 
 select 'Query 08' as '';
 -- The products ordered throughout 2014, i.e. ordered each month of that year
@@ -98,7 +100,9 @@ select 'Query 09' as '';
 select cid, cname, residence from customers natural join products natural join orders 
 where price<5 
 group by cid 
-having count(distinct pid) = (select count(pid) from products where price<5);
+having count(distinct pid) = (select count(pid) 
+                              from products 
+                              where price<5);
 
 select 'Query 10' as '';
 -- The customers who ordered the greatest number of common products. Display 3 columns: cname1, cname2, number of common products, with cname1 < cname2
@@ -107,22 +111,22 @@ select t1.cname, t2.cname, count(distinct t1.pid)
 from (select cname,cid,pid,pname 
       from orders natural join products natural join customers ) as t1
 join (select cname, cid, pid, pname
-            from orders natural join products natural join customers ) as t2
+      from orders natural join products natural join customers ) as t2
 on t1.pid = t2.pid
 where t1.cid <> t2.cid
 and t1.cname < t2.cname
 group by t1.cid, t2.cid 
 having count(distinct t1.pid) = (select count(distinct t1.pid)
-from (select cname,cid,pid,pname 
-      from orders natural join products natural join customers ) as t1
-join (select cname, cid, pid, pname
-            from orders natural join products natural join customers ) as t2
-on t1.pid = t2.pid
-where t1.cid <> t2.cid
-and t1.cname < t2.cname
-group by t1.cid, t2.cid
-order by count(distinct t1.pid) desc
-limit 1)
+                                 from (select cname,cid,pid,pname 
+                                       from orders natural join products natural join customers ) as t1
+                                 join (select cname, cid, pid, pname
+                                       from orders natural join products natural join customers ) as t2
+                                 on t1.pid = t2.pid
+                                 where t1.cid <> t2.cid
+                                 and t1.cname < t2.cname
+                                 group by t1.cid, t2.cid
+                                 order by count(distinct t1.pid) desc
+                                 limit 1);
 
 select 'Query 11' as '';
 -- The customers who ordered the largest number of products
@@ -138,8 +142,8 @@ having count(distinct pid) = (select count(distinct pid)
 select 'Query 12' as '';
 -- The products ordered by all the customers living in 'France'
 -- Les produits commandés par tous les clients vivant en 'France'
-select pid, pname, price, origin 
-from products natural join orders natural join customers 
+select p.*
+from products p natural join orders natural join customers 
 where residence = "France" 
 group by pid 
 having count(distinct cid) = (select count(cid) 
@@ -150,7 +154,9 @@ having count(distinct cid) = (select count(cid)
 select 'Query 13' as '';
 -- The customers who live in the same country customers named 'Smith' live in (customers 'Smith' not shown in the result)
 -- Les clients résidant dans les mêmes pays que les clients nommés 'Smith' (en excluant les Smith de la liste affichée)
-select c1.cid, c1.cname, c1.residence from customers c1 join customers c2 on c1.residence = c2.residence 
+select c1.* 
+from customers c1 join customers c2 
+on c1.residence = c2.residence 
 where c1.residence = c2.residence and c2.cname = "Smith" and c1.cname <> "Smith";
 
 select 'Query 14' as '';
@@ -159,14 +165,12 @@ select 'Query 14' as '';
 select cid, cname, residence from orders natural join products natural join customers 
 where odate like "2014-__-__" 
 group by cid 
-having sum(quantity*price) = (
-    select sum(quantity*price) 
-    from orders natural join products natural join customers 
-    where odate like "2014-__-__" 
-    group by cid
-    order by sum(quantity*price) desc
-    limit 1
-);
+having sum(quantity*price) = (select sum(quantity*price) 
+                              from orders natural join products natural join customers 
+                              where odate like "2014-__-__" 
+                              group by cid
+                              order by sum(quantity*price) desc
+                              limit 1);
 
 
 select 'Query 15' as '';
@@ -175,12 +179,11 @@ select 'Query 15' as '';
 select pid, pname, origin 
 from products natural join orders 
 group by pid 
-having avg(quantity*price) = (
-    select avg(quantity*price) 
-    from orders natural join products 
-    group by pid 
-    order by avg(quantity*price) desc 
-    limit 1); -- je ne pense pas que ce order by soit nécessaire (à vérifier)
+having avg(quantity*price) = (select avg(quantity*price) 
+                              from orders natural join products 
+                              group by pid 
+                              order by avg(quantity*price) desc 
+                              limit 1); 
 
 select 'Query 16' as '';
 -- The products ordered by the customers living in 'USA'
@@ -208,7 +211,9 @@ select 'Query 18' as '';
 -- Les produits plus chers que tous les produits d'origine 'India'
 select pid, pname, price, origin 
 from products 
-where price > (select max(price) from products where origin = "India");
+where price > (select max(price) 
+               from products 
+               where origin = "India");
 
 
 select 'Query 19' as '';
