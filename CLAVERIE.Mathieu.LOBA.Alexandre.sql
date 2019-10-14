@@ -14,9 +14,9 @@ set session sql_mode = 'ONLY_FULL_GROUP_BY';
 select 'Query 01' as '';
 -- The countries of residence the supplier had to ship products to in 2014
 -- Les pays de résidence où le fournisseur a dû envoyer des produits en 2014
-select distinct residence --s'il y a deux residences identiques les affiches t'ont ? ou UNIQUE ?
+select distinct residence 
 from customers natural join orders where odate like "2014-__-__" 
-and residence is not NULL; --ici on s'interrogera si la residence null doit etre affiche ?
+and residence is not NULL; 
 
 
 select 'Query 02' as '';
@@ -60,11 +60,13 @@ order by cname, sum(price*quantity) desc, pid;
 select 'Query 05' as '';
 -- The customers who only ordered products originating from their country
 -- Les clients n'ayant commandé que des produits provenant de leur pays
-select cid, cname, residence from (select *
-from customers natural join orders natural join products p
-where residence is not null and origin is not null
-group by cid
-having not residence <> p.origin) as t1; 
+select c.* 
+from customers c natural join orders natural join products
+where residence = origin
+and cid not in (select cid 
+                from customers natural join orders natural join products 
+                where residence <> origin or origin is null)
+group by cid;
 
 
 select 'Query 06' as '';
@@ -76,7 +78,7 @@ where residence <> origin
 and cid not in (select cid 
                 from customers natural join orders natural join products 
                 where residence = origin or origin is null)
-group by cid
+group by cid;
 
 
 select 'Query 07' as '';
@@ -234,9 +236,5 @@ having count(distinct cid) = (
 select 'Query 20' as '';
 -- For all countries listed in tables products or customers, including unknown countries: the name of the country, the number of customers living in this country, the number of products originating from that country
 -- Pour chaque pays listé dans les tables products ou customers, y compris les pays inconnus : le nom du pays, le nombre de clients résidant dans ce pays, le nombre de produits provenant de ce pays 
-SELECT origin, COUNT(pname), COUNT(cname)
-FROM products LEFT JOIN customers
-ON products.origin = customers.residence
-WHERE 1
-GROUP BY products.origin; --quasi bon mais s'il y a un produit et deux clients qui viennent du même pays ca affiche 2 au produit
+ 
 
