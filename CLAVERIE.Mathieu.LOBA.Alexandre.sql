@@ -61,7 +61,7 @@ select 'Query 05' as '';
 -- The customers who only ordered products originating from their country
 -- Les clients n'ayant commandé que des produits provenant de leur pays
 select cid, cname, residence from (select *
-from customers natural join orders natural join products as p
+from customers natural join orders natural join products p
 where residence is not null and origin is not null
 group by cid
 having not residence <> p.origin) as t1; 
@@ -70,11 +70,13 @@ having not residence <> p.origin) as t1;
 select 'Query 06' as '';
 -- The customers who ordered only products originating from foreign countries 
 -- Les clients n'ayant commandé que des produits provenant de pays étrangers
-select cid, cname, residence from (select *
-from customers natural join orders natural join products as p
-where residence is not null and origin is not null
+select c.* 
+from customers c natural join orders natural join products
+where residence <> origin
+and cid not in (select cid 
+                from customers natural join orders natural join products 
+                where residence = origin or origin is null)
 group by cid
-having not residence = p.origin) as t1;
 
 
 select 'Query 07' as '';
