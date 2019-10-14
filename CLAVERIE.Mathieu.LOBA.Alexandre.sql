@@ -52,7 +52,10 @@ select 'Query 04' as '';
 -- sorted by customer name (alphabetical order), then by total amount ordered (highest value first), then by product id (ascending order)
 -- Par client et par produit, le nom du client, le nom du produit, le montant total de ce produit commandé par le client, 
 -- trié par nom de client (ordre alphabétique), puis par montant total commandé (plus grance valeur d'abord), puis par id de produit (croissant)
-
+select cname, pname, sum(price*quantity) 
+from products natural join orders natural join customers 
+group by cid,pid 
+order by cname, sum(price*quantity) desc, pid;
 
 select 'Query 05' as '';
 -- The customers who only ordered products originating from their country
@@ -163,8 +166,7 @@ having sum(quantity*price) = (
     group by cid
     order by sum(quantity*price) desc
     limit 1
-)
-order by sum(quantity*price) DESC
+);
 
 
 select 'Query 15' as '';
