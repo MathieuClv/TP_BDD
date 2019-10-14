@@ -124,11 +124,13 @@ limit 1)
 select 'Query 11' as '';
 -- The customers who ordered the largest number of products
 -- Les clients ayant commandé le plus grand nombre de produits
-select c.cname, c.cid as customers, o.cid, o.quantity as orders
-from customers c left outer join orders o
-on c.cid = o.cid, quantity>=5; -- le plus grand nombre de produit ? ==> on doit avoir la bonne reponse meme si le nombre de produits augmente donc on peut pas utiliser de valeurs fixes
-
-select cid, cname, residence from customers natural join orders group by cid order by quantity; --> pas bon mais bonne base 
+select c.* from customers c natural join orders 
+group by cid
+having count(distinct pid) = (select count(distinct pid) 
+                              from customers c natural join orders 
+                              group by cid 
+                              order by count(distinct pid) desc 
+                              limit 1); 
 
 select 'Query 12' as '';
 -- The products ordered by all the customers living in 'France'
@@ -139,7 +141,7 @@ where residence = "France"
 group by pid 
 having count(distinct cid) = (select count(cid) 
                                 from customers 
-                                where residence = "France")
+                                where residence = "France");
 
 
 select 'Query 13' as '';
@@ -176,8 +178,7 @@ having avg(quantity*price) = (
     from orders natural join products 
     group by pid 
     order by avg(quantity*price) desc 
-    limit 1) 
-order by avg(quantity*price); -- je ne pense pas que ce order by soit nécessaire (à vérifier)
+    limit 1); -- je ne pense pas que ce order by soit nécessaire (à vérifier)
 
 select 'Query 16' as '';
 -- The products ordered by the customers living in 'USA'
